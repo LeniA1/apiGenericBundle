@@ -1,0 +1,44 @@
+{
+    "name": "LeniM/ApiGenericBundle",
+    "type": "symfony-bundle",
+    "description": "Rest Api creation helper",
+    "keywords": ["Api", "RestApi"],
+    "homepage": "http://friendsofsymfony.github.com",
+    "license": "MIT",
+    "minimum-stability" : "dev",
+    "authors": [
+        {
+            "name": "Martin Leni",
+            "email": "leni.martin@savewatersavemoney.co.uk",
+            "role" : "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": "~2.3|~3.0",
+        "doctrine/orm": "^2.5",
+        "friendsofsymfony/rest-bundle": "^1.7",
+        "jms/serializer-bundle": "^1.1"
+    },
+    "require-dev": {
+        "symfony/console": "~2.3|~3.0",
+        "symfony/phpunit-bridge": "~2.7|~3.0",
+        "symfony/validator": "~2.3|~3.0",
+        "symfony/yaml": "~2.3|~3.0",
+        "willdurand/propel-typehintable-behavior": "~1.0"
+    },
+    "suggest": {
+        "nelmio/NelmioApiDocBundle": "More than recommanded to keep your api well documentated"
+    },
+    "autoload": {
+        "psr-4": { "LeniM\\ApiGenericBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "support": {
+        "docs": "https://github.com/LeniA1/apiGenericBundle/readme.md"
+    }
+}
