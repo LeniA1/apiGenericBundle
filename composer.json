@@ -10,7 +10,6 @@
     "authors": [
         {
             "name": "Martin Leni",
-            "email": "leni.martin@savewatersavemoney.co.uk",
             "role" : "Developer"
         }
     ],
@@ -40,6 +39,6 @@
         }
     },
     "support": {
-        "docs": "https://github.com/LeniA1/apiGenericBundle/readme.md"
+        "docs": "https://github.com/LeniM/apiGenericBundle/readme.md"
     }
 }
