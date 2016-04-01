@@ -6,7 +6,6 @@
     "homepage": "http://friendsofsymfony.github.com",
     "license": "MIT",
     "minimum-stability" : "dev",
-    "target-dir": "LeniM/ApiGenericBundle",
     "authors": [
         {
             "name": "Martin Leni",
