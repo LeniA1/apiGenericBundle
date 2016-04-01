@@ -1,11 +1,12 @@
 {
-    "name": "LeniM/ApiGenericBundle",
+    "name": "lenim/api-generic-bundle",
     "type": "symfony-bundle",
     "description": "Rest Api creation helper",
     "keywords": ["Api", "RestApi"],
     "homepage": "http://friendsofsymfony.github.com",
     "license": "MIT",
     "minimum-stability" : "dev",
+    "target-dir": "LeniM/ApiGenericBundle",
     "authors": [
         {
             "name": "Martin Leni",
