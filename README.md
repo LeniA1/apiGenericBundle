@@ -10,6 +10,8 @@ Features include:
 
 # Configuration
 
+coming soon
+
 ## FOSRestBundle
 
 full documentation here : https://github.com/FriendsOfSymfony/FOSRestBundle
