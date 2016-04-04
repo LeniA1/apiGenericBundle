@@ -2,6 +2,6 @@
 
 - independent unit testing
 - OK : filter
-- custom doctrine methods
-- order
-- use form to submit things
+- OK : custom doctrine methods
+- OK : order & pagination
+- OK : use form to submit things
