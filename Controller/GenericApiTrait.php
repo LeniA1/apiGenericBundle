@@ -21,6 +21,10 @@ trait GenericApiTrait
                 ->setData($data);
             ;
         }
+        else
+        {
+            return $data;
+        }
     }
 
     public function apiList(array $params)
@@ -120,6 +124,45 @@ trait GenericApiTrait
             $data[$key] = $value;
         }
         return $this->get('serializer')->deserialize(json_encode($data), static::entity, 'json');
+    }
+
+    protected function entityValidation(\Symfony\Component\HttpFoundation\Request $request, $entity = false)
+    {
+        if (!defined('static::formType'))
+        {
+            throw new \Symfony\Component\Locale\Exception\NotImplementedException("The constant formType must be defined", 1);
+        }
+        if (!defined('static::entity'))
+        {
+            throw new \Symfony\Component\Locale\Exception\NotImplementedException("The constant entity must be defined", 1);
+        }
+        $sFormClassName = static::formType;
+        $sEntity = static::entity;
+
+        if(!$entity)
+        {
+            $entity = new $sEntity();
+        }
+        $form = $this->createForm(static::formType, $entity);
+
+        $aParams = array();
+        foreach ($request->request->all() as $key => $value) {
+            $aParams[Inflector::camelize($key)] = $value;
+        }
+
+        $form->submit($aParams);
+
+        if($form->isValid())
+        {
+            return $entity;
+        }
+        else
+        {
+            foreach ($form->getErrors() as $key => $oError) {
+                throw new \Symfony\Component\Process\Exception\RuntimeException($oError->getMessage(), 1);
+            }
+            throw new \Symfony\Component\Process\Exception\RuntimeException($form->getErrorsAsString(), 1);
+        }
     }
 
 }
