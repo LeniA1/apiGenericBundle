@@ -1,0 +1,9 @@
+/vendor
+/composer.phar
+.idea/
+node_modules/
+nbproject/
+tests/_output/*
+/phpunit.cmd
+/phpunit.phar
+/composer.lock
