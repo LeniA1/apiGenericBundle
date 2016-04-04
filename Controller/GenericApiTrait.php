@@ -3,6 +3,7 @@
 namespace LeniM\ApiGenericBundle\Controller;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Doctrine\Common\Util\Inflector as Inflector;
 
 trait GenericApiTrait
 {
@@ -65,6 +66,22 @@ trait GenericApiTrait
         $this->view->setTemplateVar('data')
             ->setData($entity);
         ;
+    }
+
+    public function apiDoctrineMethod($propertie, $mArgs)
+    {
+        $sMethod = 'findBy'.ucfirst(Inflector::camelize($propertie));
+        $rep = $this->getRepository();
+        try {
+            $data = $rep->$sMethod($mArgs);
+            $this->view->setTemplateVar('data')
+                ->setData($data);
+        } catch (\Exception $e) {
+            if(get_class($e) == "Doctrine\ORM\ORMException")
+            {
+                throw new NotFoundHttpException('This page does not exist');
+            }
+        }
     }
 
     /******************/

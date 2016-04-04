@@ -63,6 +63,14 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    public function doctrineMethod(Request $request, $propertie, $value)
+    {
+        // will throw a 404 if the entity do not have the property
+        $this->apiDoctrineMethod($propertie, $value);
+        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
+        return $this->handleView($this->view);
+    }
+
 
     /*****************/
     /***** Tools *****/
