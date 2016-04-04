@@ -41,7 +41,7 @@ abstract class CrudAbstract extends FOSRestController
 
     public function crudCreate(Request $request)
     {
-        $entity = $this->request2Entity($request);
+        $entity = $this->entityValidation($request);
         $this->apiCreate($entity);
         $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
         return $this->handleView($this->view);
@@ -57,8 +57,8 @@ abstract class CrudAbstract extends FOSRestController
     public function crudUpdate(Request $request, $id)
     {
         // will throw a 404 if doesnt exists
-        $this->apiGet($id);
-        $entity = $this->request2Entity($request, array('id' => $id));
+        $entity = $this->apiGet($id, true);
+        $entity = $this->entityValidation($request, $entity);
         $this->apiUpdate($entity);
         $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
         return $this->handleView($this->view);
