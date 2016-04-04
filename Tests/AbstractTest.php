@@ -125,13 +125,35 @@ abstract class AbstractTest extends WebTestCase
         return $this->client->getResponse()->getStatusCode();
     }
 
-    // /**
-    //  * Testing list
-    //  */
+    /**
+     * Testing list
+     */
     public function _testList()
     {
         $this->client->insulate(true);
         $this->client->request('GET', $this->getWebPath().'/list.json');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+
+    /**
+     * Test filtering
+     */
+
+    public function _testFilteringSuccess($id)
+    {
+        $this->assertEquals(200, $this->__testFiltering('id', $id));
+    }
+
+    public function _testFilteringFail()
+    {
+        $this->assertEquals(404, $this->__testFiltering('I_am_sure_noone_will_ever_creat_this_field_i_mean_come_on', 0));
+    }
+
+    public function __testFiltering($field, $value)
+    {
+        $this->client->insulate(true);
+        $this->client->request('GET', $this->getWebPath().'/filter/'.$field.'/'.$value.'.json');
+        return $this->client->getResponse()->getStatusCode();
     }
 }
