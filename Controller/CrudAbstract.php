@@ -33,7 +33,8 @@ abstract class CrudAbstract extends FOSRestController
 
     public function crudList(Request $request)
     {
-        $this->apiList();
+        $aParams = $this->request2RestrictionsArray($request);
+        $this->apiList($aParams);
         $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
         return $this->handleView($this->view);
     }
@@ -65,8 +66,9 @@ abstract class CrudAbstract extends FOSRestController
 
     public function doctrineMethod(Request $request, $propertie, $value)
     {
+        $params = $this->request2RestrictionsArray($request);
         // will throw a 404 if the entity do not have the property
-        $this->apiDoctrineMethod($propertie, $value);
+        $this->apiDoctrineMethod($propertie, $value, $params);
         $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
         return $this->handleView($this->view);
     }
@@ -79,5 +81,33 @@ abstract class CrudAbstract extends FOSRestController
     protected function createView()
     {
         $this->view = View::create();
+    }
+
+    protected function request2RestrictionsArray(Request $request)
+    {
+        $order = array('id' => 'ASC');
+        $requestOrder = $request->query->get('order', false);
+        if($requestOrder)
+        {
+            if(is_array($requestOrder))
+            {
+                $order = $requestOrder;
+            }
+            elseif(is_string($requestOrder))
+            {
+                $order = array($requestOrder => 'ASC');
+            }
+        }
+
+        $limit = ($request->query->get('limit', false) ? $request->query->getInt('limit') : 10);
+
+        $offset = ($request->query->get('offset', false) ? $request->query->getInt('offset') : 0);
+        $offset = ($request->query->get('page', false) ? ($request->query->getInt('page') - 1 ) * $limit : $offset);
+
+        return array(
+            'order'  => $order,
+            'offset' => $offset,
+            'limit'  => $limit
+        );
     }
 }

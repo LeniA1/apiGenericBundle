@@ -23,10 +23,10 @@ trait GenericApiTrait
         }
     }
 
-    public function apiList()
+    public function apiList(array $params)
     {
         $rep = $this->getRepository();
-        $data = $rep->findAll();
+        $data = $rep->findAll($params['order'], $params['limit'], $params['offset']);
         $this->view->setTemplateVar('data')
             ->setData($data);
         ;
@@ -68,12 +68,12 @@ trait GenericApiTrait
         ;
     }
 
-    public function apiDoctrineMethod($propertie, $mArgs)
+    public function apiDoctrineMethod($propertie, $mArgs, $params)
     {
         $sMethod = 'findBy'.ucfirst(Inflector::camelize($propertie));
         $rep = $this->getRepository();
         try {
-            $data = $rep->$sMethod($mArgs);
+            $data = $rep->$sMethod($mArgs, $params['order'], $params['limit'], $params['offset']);
             $this->view->setTemplateVar('data')
                 ->setData($data);
         } catch (\Exception $e) {
