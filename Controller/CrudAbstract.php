@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the lenim/api-generic-bundle package.
+ *
+ * (c) LeniM <https://github.com/lenim/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace LeniM\ApiGenericBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,6 +33,9 @@ abstract class CrudAbstract extends FOSRestController
         $this->createView();
     }
 
+    /**
+     * Get an entity
+     */
     public function crudGet(Request $request, $id)
     {
         $this->apiGet($id);
@@ -31,6 +43,9 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    /**
+     * List entities
+     */
     public function crudList(Request $request)
     {
         $aParams = $this->request2RestrictionsArray($request);
@@ -39,6 +54,9 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    /**
+     * Create an entity reading a request then saves it
+     */
     public function crudCreate(Request $request)
     {
         $entity = $this->entityValidation($request);
@@ -47,6 +65,9 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    /**
+     * Delete an entity
+     */
     public function crudDelete(Request $request, $id)
     {
         $this->apiDelete($id);
@@ -54,6 +75,9 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    /**
+     * Updates an entity reading the request then saves it
+     */
     public function crudUpdate(Request $request, $id)
     {
         // will throw a 404 if doesnt exists
@@ -64,6 +88,10 @@ abstract class CrudAbstract extends FOSRestController
         return $this->handleView($this->view);
     }
 
+    /**
+     * Calls a method of doctrine findBy{$propertie} giving it the parameter value.
+     * it ll deduce fron the request the pagination
+     */
     public function doctrineMethod(Request $request, $propertie, $value)
     {
         $params = $this->request2RestrictionsArray($request);
@@ -83,6 +111,9 @@ abstract class CrudAbstract extends FOSRestController
         $this->view = View::create();
     }
 
+    /**
+     * Turns the request into the array used for the pagination
+     */
     protected function request2RestrictionsArray(Request $request)
     {
         $order = array('id' => 'ASC');

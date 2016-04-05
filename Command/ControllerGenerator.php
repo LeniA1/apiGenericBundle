@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the ApiGenericBundle package.
+ * This file is part of the lenim/api-generic-bundle package.
  *
  * (c) LeniM <https://github.com/lenim/>
  *
@@ -16,7 +16,7 @@ use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 /**
  * Generates a Controller inside a bundle.
  *
- * @author Wouter J <wouter@wouterj.nl>
+ * @author Martin Leni based on Wouter J <wouter@wouterj.nl> work for Symfony package
  */
 class ControllerGenerator extends Generator
 {
@@ -48,46 +48,43 @@ class ControllerGenerator extends Generator
                 'templating' => $templateFormat,
             ),
             'controller' => $controller,
+            'entityInfos' => $actions['entityInfos'],
         );
 
-        foreach ($actions as $i => $action) {
+        foreach ($actions['action'] as $i => $action) {
             // get the action name without the suffix Action (for the template logical name)
-            $actions[$i]['basename'] = substr($action['name'], 0, -6);
+            $actions['action'][$i]['basename'] = substr($action['name'], 0, -6);
             $params = $parameters;
-            $params['action'] = $actions[$i];
-
-            // create a template
-            $template = $actions[$i]['template'];
-            if ('default' == $template) {
-                @trigger_error('The use of the "default" keyword is deprecated. Use the real template name instead.', E_USER_DEPRECATED);
-                $template = $bundle->getName().':'.$controller.':'.
-                    strtolower(preg_replace(array('/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'), array('\\1_\\2', '\\1_\\2'), strtr(substr($actionName, 0, -6), '_', '.')))
-                    .'.html.'.$templateFormat;
-            }
-
-            if ('twig' == $templateFormat) {
-                $this->renderFile('controller/Template.html.twig.twig', $dir.'/Resources/views/'.$this->parseTemplatePath($template), $params);
-            } else {
-                $this->renderFile('controller/Template.html.php.twig', $dir.'/Resources/views/'.$this->parseTemplatePath($template), $params);
-            }
-
-            $this->generateRouting($bundle, $controller, $actions[$i], $routeFormat);
+            $params['action'] = $actions['action'][$i];
+            $this->generateRouting($bundle, $controller, $actions['action'][$i], $routeFormat);
         }
+        $this->generateRouting(
+            $bundle,
+            $controller,
+            array(
+                'basename' => 'api_'.$controller,
+                'resource' => '@'.$bundle->getName().'/Resources/config/routing/'.$controller.'.yml'
+            ),
+            $routeFormat,
+            $bundle->getPath().'/Resources/config/routing.'.$routeFormat
+        );
 
-        $parameters['actions'] = $actions;
+        $parameters['actions'] = $actions['action'];
 
         $this->renderFile('controller/Controller.php.twig', $controllerFile, $parameters);
         $this->renderFile('controller/ControllerTest.php.twig', $dir.'/Tests/Controller/'.$controller.'ControllerTest.php', $parameters);
     }
 
-    public function generateRouting(BundleInterface $bundle, $controller, array $action, $format)
+    public function generateRouting(BundleInterface $bundle, $controller, array $action, $format, $file = false)
     {
         // annotation is generated in the templates
         if ('annotation' == $format) {
             return true;
         }
-
-        $file = $bundle->getPath().'/Resources/config/routing.'.$format;
+        if (!$file)
+        {
+            $file = $bundle->getPath().'/Resources/config/routing/'.$controller.'.'.$format;
+        }
         if (file_exists($file)) {
             $content = file_get_contents($file);
         } elseif (!is_dir($dir = $bundle->getPath().'/Resources/config')) {
@@ -104,13 +101,42 @@ class ControllerGenerator extends Generator
             }
 
             $content .= sprintf(
-                "\n%s:\n    path:     %s\n    defaults: { _controller: %s }\n",
-                $name,
-                $action['route'],
-                $controller
+                "\n%s:\n",
+                $name
             );
+            if(isset($action['route']))
+            {
+                $content .= sprintf(
+                    "    path:     %s\n    defaults: { _controller: %s }\n",
+                    $action['route'],
+                    $controller
+                );            }
+            if(isset($action['methods']))
+            {
+                $content .= sprintf(
+                    "    methods:  [%s]\n",
+                    $action['methods']
+                );
+            }
+            if(isset($action['resource']))
+            {
+                $content .= sprintf(
+                    "    resource:  %s\n",
+                    $action['resource']
+                );
+            }
+            if(isset($action['route_require']))
+            {
+                $content .= sprintf("    requirements:\n");
+                foreach ($action['route_require'] as $key => $value) {
+                    $content .= sprintf("        %s: %s\n", $key, $value);
+                }
+            }
+
         } elseif ('xml' == $format) {
+            throw new \Exception("Sorry, only yml is working for now ...", 1);
             // xml
+            /*
             if (!isset($content)) {
                 // new file
                 $content = <<<EOT
@@ -136,8 +162,11 @@ EOT;
             $dom->formatOutput = true;
             $dom->loadXML($sxe->asXML());
             $content = $dom->saveXML();
+            */
         } elseif ('php' == $format) {
+            throw new \Exception("Sorry, only yml is working for now ...", 1);
             // php
+            /*
             if (isset($content)) {
                 // edit current file
                 $pointer = strpos($content, 'return');
@@ -149,7 +178,10 @@ EOT;
                 $content .= sprintf("%s->add('%s', new Route('%s', array(", $collection[1], $name, $action['route']);
                 $content .= sprintf("\n    '_controller' => '%s',", $controller);
                 $content .= "\n)));\n\nreturn ".$collection[1].';';
+                */
             } else {
+                throw new \Exception("Sorry, only yml is working for now ...", 1);
+                /*
                 // new file
                 $content = <<<EOT
 <?php
@@ -162,6 +194,7 @@ EOT;
                 $content .= sprintf("\n    '_controller' => '%s',", $controller);
                 $content .= "\n)));\n\nreturn \$collection;";
             }
+            */
         }
 
         $flink = fopen($file, 'w');
@@ -176,25 +209,5 @@ EOT;
         } else {
             throw new \RunTimeException(sprintf('Problems with generating file "%s", did you gave write access to that directory?', $file));
         }
-    }
-
-    protected function parseTemplatePath($template)
-    {
-        $data = $this->parseLogicalTemplateName($template);
-
-        return $data['controller'].'/'.$data['template'];
-    }
-
-    protected function parseLogicalTemplateName($logicalName, $part = '')
-    {
-        if (2 !== substr_count($logicalName, ':')) {
-            throw new \RuntimeException(sprintf('The given template name ("%s") is not correct (it must contain two colons).', $logicalName));
-        }
-
-        $data = array();
-
-        list($data['bundle'], $data['controller'], $data['template']) = explode(':', $logicalName);
-
-        return ($part ? $data[$part] : $data);
     }
 }

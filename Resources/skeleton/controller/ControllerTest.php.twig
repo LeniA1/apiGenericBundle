@@ -1,0 +1,46 @@
+<?php
+
+namespace {{ namespace }}\Tests\Controller;
+
+{% block use_statements %}
+use LeniM\ApiGenericBundle\Tests\AbstractTest;
+use SWSM\ApiBundle\Tests\UserProvider;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ controller }}ControllerTest extends AbstractTest
+{% endblock class_definition %}
+{
+{% block class_body %}
+    use UserProvider;
+
+    private $webPath ='{FillThisUpWithTheRightPath}';
+    public $client = null;
+
+    public function getWebPath()
+    {
+        return $this->webPath;
+    }
+    public function testFullScenarioCrud()
+    {
+        $this->setClient($this->getAuthorizedClient());
+        $aValues = array();
+        $null = $this->_testCreateFail(array());
+        $id = $this->_testCreateSuccess($aValues);
+
+        $this->_testGetSuccess($id);
+        $this->_testGetFail(0);
+
+        $this->_testUpdateSuccess($aValues, $id);
+        $this->_testUpdateNotFound($aValues, 0);
+        $aValues['{fillthisfieldWithRequiredValue}'] = null;
+        $this->_testUpdateFail($aValues, $id);
+
+
+        $this->_testDeleteSuccess($id);
+        $this->_testDeleteFail(0);
+
+        $this->_testList();
+    }
+{% endblock class_body %}
+}
