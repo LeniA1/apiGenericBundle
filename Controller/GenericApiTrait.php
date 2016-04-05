@@ -14,6 +14,11 @@ namespace LeniM\ApiGenericBundle\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\Common\Util\Inflector as Inflector;
 
+/**
+ * Toolkit that allows you to store data in the viiew layer
+ *
+ * @author Martin Leni based on Wouter J <wouter@wouterj.nl> work for Symfony package
+ */
 trait GenericApiTrait
 {
     /**

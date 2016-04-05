@@ -33,21 +33,21 @@ class {{ controller }}Controller extends CrudAbstract
     {% if 'annotation' == format.routing -%}
      * @Route("{{ action.route }}")
     {% endif -%}
-    {% if action.description is defined -%}
+    {%- if action.description is defined %}
      *
      * {{action.description}}
 {% endif -%}
-    {% if action.nelmio is defined %}
+    {%- if action.nelmio is defined %}
      *
      * @ApiDoc(
      *  resource={{ action.nelmio.resource is defined ? action.nelmio.resource : true}},
 {% if action.nelmio.description is defined %}
      *  description="{{action.nelmio.description}}",
 {% endif -%}
-{% if action.nelmio.output is defined %}
+{%- if action.nelmio.output is defined %}
      *  output="{{action.nelmio.output}}'",
 {% endif -%}
-{% if action.nelmio.input is defined %}
+{%- if action.nelmio.input is defined %}
      *  input="{{action.nelmio.input}}'",
 {% endif -%}
 {%- if action.nelmio.requirements is defined %}
@@ -56,14 +56,14 @@ class {{ controller }}Controller extends CrudAbstract
      *      { "name"="{{item.name}}", "dataType"="{{item.dataType}}", "requirement"="{% if item.dataType == 'integer' %}\d+{%- else -%}.*{% endif %}", "description"="{{item.description is defined ? item.description : item.name}}" },
 {% endfor %}
      *  },
-     {%- endif -%}
-     {%- if action.nelmio.parameters is defined %}
+{% endif %}
+{% if action.nelmio.parameters is defined %}
      *  parameters={
 {% for item in action.nelmio.parameters %}
      *      { "name"="{{item.name}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
 {% endfor %}
      *  },
-{%- endif %}
+{% endif %}
      * )
 {% endif %}
      */
@@ -72,10 +72,12 @@ class {{ controller }}Controller extends CrudAbstract
             Request ${{- action.placeholders|join(', $') -}}
         {%- endif -%})
     {
-        return parent::{{action.parent}}(
+        parent::{{action.parent}}(
             {%- if action.placeholders|length > 0 -%}
                 ${{- action.placeholders|join(', $') -}}
             {%- endif -%});
+        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
+        return $this->handleView($this->view);
     }
 
 {% endfor -%}

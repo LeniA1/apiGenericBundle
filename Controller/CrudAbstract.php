@@ -20,7 +20,13 @@ use FOS\RestBundle\View\View;
 
 use LeniM\ApiGenericBundle\Controller\GenericApiTrait;
 
-
+/**
+ * Abstract class that is able to read a request and turn it into action
+ * Stores data in the view layer using \LeniM\ApiGenericBundle\Controller\GenericApiTrait
+ *
+ * @author Martin Leni based on Wouter J <wouter@wouterj.nl> work for Symfony package
+ *
+ */
 abstract class CrudAbstract extends FOSRestController
 {
     use GenericApiTrait;
@@ -38,9 +44,7 @@ abstract class CrudAbstract extends FOSRestController
      */
     public function crudGet(Request $request, $id)
     {
-        $this->apiGet($id);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiGet($id);
     }
 
     /**
@@ -49,9 +53,7 @@ abstract class CrudAbstract extends FOSRestController
     public function crudList(Request $request)
     {
         $aParams = $this->request2RestrictionsArray($request);
-        $this->apiList($aParams);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiList($aParams);
     }
 
     /**
@@ -60,9 +62,7 @@ abstract class CrudAbstract extends FOSRestController
     public function crudCreate(Request $request)
     {
         $entity = $this->entityValidation($request);
-        $this->apiCreate($entity);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiCreate($entity);
     }
 
     /**
@@ -70,9 +70,7 @@ abstract class CrudAbstract extends FOSRestController
      */
     public function crudDelete(Request $request, $id)
     {
-        $this->apiDelete($id);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiDelete($id);
     }
 
     /**
@@ -83,9 +81,7 @@ abstract class CrudAbstract extends FOSRestController
         // will throw a 404 if doesnt exists
         $entity = $this->apiGet($id, true);
         $entity = $this->entityValidation($request, $entity);
-        $this->apiUpdate($entity);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiUpdate($entity);
     }
 
     /**
@@ -96,9 +92,7 @@ abstract class CrudAbstract extends FOSRestController
     {
         $params = $this->request2RestrictionsArray($request);
         // will throw a 404 if the entity do not have the property
-        $this->apiDoctrineMethod($propertie, $value, $params);
-        $this->view->setTemplate("SWSMApiBundle:Generic:data.html.twig");
-        return $this->handleView($this->view);
+        return $this->apiDoctrineMethod($propertie, $value, $params);
     }
 
 
