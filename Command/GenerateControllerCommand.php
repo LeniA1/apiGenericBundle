@@ -154,7 +154,7 @@ EOT
                 'entity' => $this->entityInfos->name,
                 'form' => str_replace('\Entity\\', '\Form\\', $this->entityInfos->name).'Type',
                 'enableDocumentation' => $this->nelmioEnabled(),
-                'fields' => $this->entityInfos->columnNames
+                'fields' => $this->entityInfos
             ));
 
         $generator = $this->getGenerator($bundle);
@@ -335,7 +335,7 @@ EOT
                      $aEntityInfos[$sField]['required'] = true;
                 }
                 $aEntityInfos[$sField]['name'] = $sField;
-                $aEntityInfos[$sField]['columnNames'] = $this->entityInfos->columnNames[$sField];
+                $aEntityInfos[$sField]['columnNames'] = $$aField['nullable'] = $this->entityInfos->columnNames[$sField];
             }
 
             // Generate nelmio documentation
@@ -358,11 +358,14 @@ EOT
                     $this->aActions[$k]['nelmio']['output'] = 'array';
                     $this->aActions[$k]['nelmio']['requirements'] = array(
                         'propertie' => array(
-                            'name'        => 'value',
+                            'name'        => 'propertie',
+                            'columnNames' => 'propertie',
                             'dataType'    => 'string',
                             'description' => 'Propertie you want to use as filter, camel case is handled'
                         ),
-                        'value' => array('name' => 'value',
+                        'value' => array(
+                            'name'        => 'value',
+                            'columnNames' => 'value',
                             'dataType'    => 'string',
                             'description' => 'Value you want to use as filter'
                         )
@@ -381,6 +384,7 @@ EOT
                     $this->aActions[$k]['nelmio']['requirements'] = array(
                         'id' => array(
                             'name' => 'id',
+                            'columnNames' => 'id',
                             'dataType' => 'integer',
                             'description' => 'Id of the '.$this->entity.' you want to target'
                         )

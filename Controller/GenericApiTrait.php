@@ -190,7 +190,10 @@ trait GenericApiTrait
 
         $aParams = array();
         foreach ($request->request->all() as $key => $value) {
-            $aParams[Inflector::camelize($key)] = $value;
+            if($key !== '_format')
+            {
+                $aParams[Inflector::camelize($key)] = $value;
+            }
         }
 
         $form->submit($aParams);
@@ -202,7 +205,7 @@ trait GenericApiTrait
         else
         {
             foreach ($form->getErrors() as $key => $oError) {
-                throw new \Symfony\Component\Process\Exception\RuntimeException($oError->getMessage(), 1);
+                throw new \Symfony\Component\Process\Exception\RuntimeException($oError->getMessage().' ('.json_encode($oError->getMessageParameters()).')', 1);
             }
             throw new \Symfony\Component\Process\Exception\RuntimeException($form->getErrorsAsString(), 1);
         }

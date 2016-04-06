@@ -67,7 +67,7 @@ class {{ controller }}Controller extends CrudAbstract
 {% if action.nelmio.filters is defined %}
      *  filters={
 {% for item in action.nelmio.filters %}
-     *      { "name"="{{item.columnNames}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
+     *      { "name"="{{item.name}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
 {% endfor %}
      *  },
 {% endif %}
