@@ -1,7 +1,7 @@
 #ToDo
 
 - independent unit testing
-- filter
-- order
-- custom doctrine methods
-- use form to submit things
+- OK : filter
+- OK : custom doctrine methods
+- OK : order & pagination
+- OK : use form to submit things

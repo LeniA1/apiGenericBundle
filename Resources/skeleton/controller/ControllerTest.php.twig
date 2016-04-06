@@ -1,0 +1,112 @@
+<?php
+
+namespace {{ namespace }}\Tests\Controller;
+
+{% block use_statements %}
+use LeniM\ApiGenericBundle\Tests\AbstractTest;
+use SWSM\ApiBundle\Tests\UserProvider;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ controller }}ControllerTest extends AbstractTest
+{% endblock class_definition %}
+{
+{% block class_body %}
+
+    use UserProvider;
+
+    private $webPath = FILL_UP_WITH_WEB_PATH;
+    public $client = null;
+    public $aIds = array();
+    public $aFields = array(
+{% for item in entityInfos.fields.columnNames %}
+            '{{item}}' => 1,
+{% endfor %}
+        );
+
+    public function getWebPath()
+    {
+        return $this->webPath;
+    }
+
+    private function setUpClient()
+    {
+        if(!$this->client)
+        {
+            $this->setClient($this->getAuthorizedClient());
+        }
+    }
+
+    public function testInsert()
+    {
+        $this->setUpClient();
+        $aValues = $this->aFields;
+        $null = $this->_testCreateFail(array());
+        $id = $this->_testCreateSuccess($aValues);
+        $this->aIds[] = $id;
+    }
+
+    public function testUpdate()
+    {
+        if(!$this->canTest())
+        {
+            $this->markTestIncomplete('This test can not be runned has long as insert is not working.');
+        }
+        $this->setUpClient();
+        $aValues = $this->aFields;
+        $id = $this->aIds[0];
+        $this->_testUpdateSuccess($aValues, $id);
+        $this->_testUpdateNotFound($aValues, 0);
+        $aValues[FILL_UP_WITH_REQUIRE_FIELD] = null;
+        $this->_testUpdateFail($aValues, $id);
+    }
+
+    public function testDelete()
+    {
+        if(!$this->canTest())
+        {
+            $this->markTestIncomplete('This test can not be runned has long as insert is not working.');
+        }
+        $this->setUpClient();
+        foreach ($this->aIds as $value) {
+            $this->_testDeleteSuccess($value);
+        }
+        $this->_testDeleteFail(0);
+    }
+
+    public function testGet()
+    {
+        if(!$this->canTest())
+        {
+            $this->markTestIncomplete('This test can not be runned has long as insert is not working.');
+        }
+        $this->setUpClient();
+        $this->_testGetSuccess($this->aIds[0]);
+        $this->_testGetFail(0);
+    }
+
+    public function testlist()
+    {
+        $this->setUpClient();
+        $this->_testList();
+    }
+
+    private function canTest()
+    {
+        if(sizeof($this->aIds) == 0)
+        {
+            $this->testInsert();
+        }
+        return (sizeof($this->aIds) > 0);
+    }
+
+    public function __destruct()
+    {
+        if(sizeof($this->aIds) > 0)
+        {
+            $this->testDelete();
+        }
+    }
+
+{% endblock class_body %}
+}
