@@ -10,43 +10,15 @@ Features include:
 
 # Configuration
 
-coming soon
-
-## FOSRestBundle
-
-full documentation here : https://github.com/FriendsOfSymfony/FOSRestBundle
-
-## JMSSerializerBundle
-
-full documentation here : https://github.com/schmittjoh/JMSSerializerBundle
+[documentation](https://github.com/LeniM/apiGenericBundle/blob/master/doc/configuration.md).
 
 # Build your first controller
 
-Just create a new controller class that extends LeniM\ApiGenericBundle\Controller\GenericApiTrait\CrudAbstract and uses its parent methods.
-It ll need a few information that you store in constant :
-- repository ()
-- entity ()
+[documentation](https://github.com/LeniM/apiGenericBundle/blob/master/doc/generate.md).
 
-It allows the method :
-- crudGet(int, int)
-- crudList(Request)
-- crudCreate(Request)
-- crudDelete(Request, int)
-- crudUpdate(Request, int)
+# Security
 
-# Build your first unit test 
-
-Just create a unit test class that extends LeniM\ApiGenericBundle\Tests\AbstractTest and uses its parent methods.
-As this is a webtestcase, it ll need the web root path of this entity in your api in a method getWebPath()
-All the 
-
-# Going futher with nelmio/NelmioApiDocBundle
-
-There are 2 point for creating a controller file for each entity even if it will be handled the sqme way :
-- keep a full control of the routes
-- generate a beautifull documentation with nelmio api doc bundle 
-
-https://github.com/nelmio/NelmioApiDocBundle
+[documentation](https://github.com/LeniM/apiGenericBundle/blob/master/doc/security.md).
 
 # License
 
