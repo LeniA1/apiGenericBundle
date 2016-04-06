@@ -151,6 +151,7 @@ EOT
             'action' => $this->aActions,
             'entityInfos' => array(
                 'repository' => (isset($this->entityInfos->customRepositoryClassName) ? $this->entityInfos->customRepositoryClassName : $this->entity),
+                'entityFullName' => $input->getOption('entity'),
                 'entity' => $this->entityInfos->name,
                 'form' => str_replace('\Entity\\', '\Form\\', $this->entityInfos->name).'Type',
                 'enableDocumentation' => $this->nelmioEnabled(),

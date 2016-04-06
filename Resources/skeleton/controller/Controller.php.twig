@@ -20,7 +20,7 @@ class {{ controller }}Controller extends CrudAbstract
 {% endblock class_definition %}
 {
 {% block class_body %}
-    const repository = '{{ bundle }}:{{ entityInfos.repository }}';
+    const repository = '{{ entityInfos.entityFullName }}';
     const entity     = '{{ entityInfos.entity }}';
     const formType   = '{{ entityInfos.form }}';
 
