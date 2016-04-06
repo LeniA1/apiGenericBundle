@@ -121,7 +121,7 @@ class ControllerGenerator extends Generator
             if(isset($action['prefix']))
             {
                 $content .= sprintf(
-                    "    prefix:  [%s]\n",
+                    "    prefix:  %s\n",
                     $action['prefix']
                 );
             }
