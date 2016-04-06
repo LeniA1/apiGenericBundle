@@ -1,12 +1,29 @@
 <?php
 
+/*
+ * This file is part of the lenim/api-generic-bundle package.
+ *
+ * (c) LeniM <https://github.com/lenim/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace LeniM\ApiGenericBundle\Controller;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Doctrine\Common\Util\Inflector as Inflector;
 
+/**
+ * Toolkit that allows you to store data in the viiew layer
+ *
+ * @author Martin Leni based on Wouter J <wouter@wouterj.nl> work for Symfony package
+ */
 trait GenericApiTrait
 {
+    /**
+     * Returns an entity
+     */
     public function apiGet($id, $bNoReturn = false)
     {
         $rep = $this->getRepository();
@@ -27,6 +44,9 @@ trait GenericApiTrait
         }
     }
 
+    /**
+     * gets a ordered list of entities
+     */
     public function apiList(array $params)
     {
         $rep = $this->getRepository();
@@ -36,6 +56,9 @@ trait GenericApiTrait
         ;
     }
 
+    /**
+     * Saves an entity
+     */
     public function apiCreate($entity)
     {
         $this->saveEntity($entity);
@@ -44,6 +67,9 @@ trait GenericApiTrait
         ;
     }
 
+    /**
+     * Deletes an entity
+     */
     public function apiDelete($id)
     {
         $entity = $this->getRepository()->find($id);
@@ -59,12 +85,14 @@ trait GenericApiTrait
         ;
     }
 
-
+    /**
+     * Updates an entity
+     */
     public function apiUpdate($entity)
     {
         if(!$this->getRepository()->find($entity->getId()))
         {
-            throw $this->createNotFoundException('This business does not exist');
+            throw $this->createNotFoundException('This element does not exist');
         }
         $this->saveEntity($entity);
         $this->view->setTemplateVar('data')
@@ -72,7 +100,11 @@ trait GenericApiTrait
         ;
     }
 
-    public function apiDoctrineMethod($propertie, $mArgs, $params)
+    /**
+     * Returns a list of entities who as the value in mArgs foir the propertie $propertie
+     * You can order the results using the parameter $params wich is an array that has a key order, limit and offset
+     */
+    public function apiDoctrineMethod($propertie, $mArgs, array $params)
     {
         $sMethod = 'findBy'.ucfirst(Inflector::camelize($propertie));
         $rep = $this->getRepository();
@@ -92,6 +124,9 @@ trait GenericApiTrait
     /***** Entity *****/
     /******************/
 
+    /**
+     * Saves an entity
+     */
     private function saveEntity($entity)
     {
         $em = $this->getDoctrine()->getManager();
@@ -103,7 +138,9 @@ trait GenericApiTrait
     /***** Tools *****/
     /*****************/
 
-
+    /**
+     * Returns the current repository
+     */
     private function getRepository()
     {
         if (!defined('static::repository'))
@@ -113,6 +150,9 @@ trait GenericApiTrait
         return $this->getDoctrine()->getManager()->getRepository(static::repository);
     }
 
+    /**
+     * Turns a request into an entity
+     */
     protected function request2Entity(\Symfony\Component\HttpFoundation\Request $request, array $aForced = array())
     {
         if (!defined('static::entity'))
@@ -126,6 +166,9 @@ trait GenericApiTrait
         return $this->get('serializer')->deserialize(json_encode($data), static::entity, 'json');
     }
 
+    /**
+     * Tests if the posted values are fitting into the requested entity
+     */
     protected function entityValidation(\Symfony\Component\HttpFoundation\Request $request, $entity = false)
     {
         if (!defined('static::formType'))
@@ -147,7 +190,10 @@ trait GenericApiTrait
 
         $aParams = array();
         foreach ($request->request->all() as $key => $value) {
-            $aParams[Inflector::camelize($key)] = $value;
+            if($key !== '_format')
+            {
+                $aParams[Inflector::camelize($key)] = $value;
+            }
         }
 
         $form->submit($aParams);
@@ -159,7 +205,7 @@ trait GenericApiTrait
         else
         {
             foreach ($form->getErrors() as $key => $oError) {
-                throw new \Symfony\Component\Process\Exception\RuntimeException($oError->getMessage(), 1);
+                throw new \Symfony\Component\Process\Exception\RuntimeException($oError->getMessage().' ('.json_encode($oError->getMessageParameters()).')', 1);
             }
             throw new \Symfony\Component\Process\Exception\RuntimeException($form->getErrorsAsString(), 1);
         }
