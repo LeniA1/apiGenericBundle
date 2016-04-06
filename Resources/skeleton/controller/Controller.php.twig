@@ -53,14 +53,21 @@ class {{ controller }}Controller extends CrudAbstract
 {%- if action.nelmio.requirements is defined %}
      *  requirements={
 {% for item in action.nelmio.requirements %}
-     *      { "name"="{{item.name}}", "dataType"="{{item.dataType}}", "requirement"="{% if item.dataType == 'integer' %}\d+{%- else -%}.*{% endif %}", "description"="{{item.description is defined ? item.description : item.name}}" },
+     *      { "name"="{{item.columnNames}}", "dataType"="{{item.dataType}}", "requirement"="{% if item.dataType == 'integer' %}\d+{%- else -%}.*{% endif %}", "description"="{{item.description is defined ? item.description : item.name}}" },
 {% endfor %}
      *  },
 {% endif %}
 {% if action.nelmio.parameters is defined %}
      *  parameters={
 {% for item in action.nelmio.parameters %}
-     *      { "name"="{{item.name}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
+     *      { "name"="{{item.columnNames}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
+{% endfor %}
+     *  },
+{% endif %}
+{% if action.nelmio.filters is defined %}
+     *  filters={
+{% for item in action.nelmio.filters %}
+     *      { "name"="{{item.columnNames}}", "dataType"="{{item.dataType}}", "required"="{{ item.required is defined and item.dataType == 1 ? 'true,' : 'false' }}", "description"="{{item.description is defined ? item.description : item.name}}" },
 {% endfor %}
      *  },
 {% endif %}

@@ -62,6 +62,7 @@ class ControllerGenerator extends Generator
             $bundle,
             $controller,
             array(
+                'prefix' => '/'.$controller,
                 'basename' => 'api_'.$controller,
                 'resource' => '@'.$bundle->getName().'/Resources/config/routing/'.$controller.'.yml'
             ),
@@ -70,7 +71,6 @@ class ControllerGenerator extends Generator
         );
 
         $parameters['actions'] = $actions['action'];
-
         $this->renderFile('controller/Controller.php.twig', $controllerFile, $parameters);
         $this->renderFile('controller/ControllerTest.php.twig', $dir.'/Tests/Controller/'.$controller.'ControllerTest.php', $parameters);
     }
@@ -116,6 +116,13 @@ class ControllerGenerator extends Generator
                 $content .= sprintf(
                     "    methods:  [%s]\n",
                     $action['methods']
+                );
+            }
+            if(isset($action['prefix']))
+            {
+                $content .= sprintf(
+                    "    prefix:  [%s]\n",
+                    $action['prefix']
                 );
             }
             if(isset($action['resource']))

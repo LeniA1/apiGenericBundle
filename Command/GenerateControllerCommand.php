@@ -153,7 +153,8 @@ EOT
                 'repository' => (isset($this->entityInfos->customRepositoryClassName) ? $this->entityInfos->customRepositoryClassName : $this->entity),
                 'entity' => $this->entityInfos->name,
                 'form' => str_replace('\Entity\\', '\Form\\', $this->entityInfos->name).'Type',
-                'enableDocumentation' => $this->nelmioEnabled()
+                'enableDocumentation' => $this->nelmioEnabled(),
+                'fields' => $this->entityInfos->columnNames
             ));
 
         $generator = $this->getGenerator($bundle);
@@ -334,12 +335,13 @@ EOT
                      $aEntityInfos[$sField]['required'] = true;
                 }
                 $aEntityInfos[$sField]['name'] = $sField;
+                $aEntityInfos[$sField]['columnNames'] = $this->entityInfos->columnNames[$sField];
             }
 
             // Generate nelmio documentation
             foreach($this->aActions as $k => $v)
             {
-                $this->aActions[$k]['route'] = strtolower(str_replace('\\', '', $this->entity)).$this->aActions[$k]['route'];
+                // $this->aActions[$k]['route'] = strtolower(str_replace('\\', '', $this->entity)).$this->aActions[$k]['route'];
                 $this->aActions[$k]['nelmio'] = array(
                     'resource' => 'true',
                     'description' => $this->aActions[$k]['description_short'],
@@ -386,23 +388,23 @@ EOT
                 }
                 if($k == 'doctrineMethodAction' || $k == 'listAction')
                 {
-                    if(!isset($this->aActions[$k]['nelmio']['parameters'])) $this->aActions[$k]['nelmio']['parameters'] = array();
-                    $this->aActions[$k]['nelmio']['parameters']['page'] = array(
+                    if(!isset($this->aActions[$k]['nelmio']['filters'])) $this->aActions[$k]['nelmio']['filters'] = array();
+                    $this->aActions[$k]['nelmio']['filters']['page'] = array(
                         'name' => 'page',
                         'dataType' => 'integer',
                         'description' => 'Page number, this parameter is directly related to the other parameter limit'
                     );
-                    $this->aActions[$k]['nelmio']['parameters']['offset'] = array(
+                    $this->aActions[$k]['nelmio']['filters']['offset'] = array(
                         'name' => 'offset',
                         'dataType' => 'integer',
                         'description' => 'Number of the first element, allows you to build your own pagnation system'
                     );
-                    $this->aActions[$k]['nelmio']['parameters']['limit'] = array(
+                    $this->aActions[$k]['nelmio']['filters']['limit'] = array(
                         'name' => 'limit',
                         'dataType' => 'integer',
                         'description' => 'Maximum number of elements you want to display'
                     );
-                    $this->aActions[$k]['nelmio']['parameters']['order'] = array(
+                    $this->aActions[$k]['nelmio']['filters']['order'] = array(
                         'name' => 'order',
                         'dataType' => 'mixed',
                         'description' => 'field you want to order by, default is id ASC. You can also send an array with the field as key and ASC|DESC as value'
